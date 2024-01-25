@@ -1,32 +1,39 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
-const AddToTable = () => {
+const AddToTable = ({ tableNames }) => {
   const [tableName, setTableName] = useState("");
-  const [tableNames, setTableNames] = useState([]);
-  const [jsonInput, setJsonInput] = useState(`{
-    "param_1": "string",
-    "param_2": "string"
-  }`);
+  const [jsonInput, setJsonInput] = useState({});
   const [response, setResponse] = useState("");
 
-  const handleTableNameChange = (e) => {
-    setTableName(e.target.value);
-  };
+  const handleTableNameChange = useCallback((e) => {
+    const tableName = e.target.value;
+    setTableName(tableName);
+
+    axios
+      .get(`https://localhost:4567/Api/GetProperties/${tableName}`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        var object = {};
+        response?.data?.properties?.map((item,index) => {
+          const { name, type } = item;
+
+          if (name !== "Id" && type !== "INTEGER PRIMARY KEY") {
+            object[name] = type;
+          }
+
+        });
+
+        setJsonInput(object);
+        console.log(object);
+      });
+  });
 
   const handleJsonInputChange = (e) => {
-    setJsonInput(e.target.value);
-  };
-
-  const getAllTableNames = async () => {
-    try {
-      const response = await axios.get(
-        "https://localhost:7093/api/GetAllTableNames"
-      );
-      setTableNames(response.data);
-    } catch (error) {
-      console.error("Error fetching table names:", error);
-    }
+    setJsonInput(JSON.parse(e.target.value));
   };
 
   const handleGenerateApi = async () => {
@@ -35,7 +42,7 @@ const AddToTable = () => {
       console.log("Parameters:", jsonInput);
 
       const response = await axios.post(
-        `https://localhost:7093/Api/Add?tableName=${tableName}`,
+        `https://localhost:4567/Api/Add?tableName=${tableName}`,
         jsonInput,
         {
           headers: {
@@ -45,44 +52,53 @@ const AddToTable = () => {
       );
 
       const data = response.data;
-      setResponse(`${response.status} - ${response.statusText}`)
+      setResponse({
+        url: `${response.status} - ${response.statusText}`,
+        status: data,
+      });
     } catch (error) {
-      setResponse(`${error.response.status} - ${error.response.statusText}`)
+      setResponse({
+        url: `${error?.response.status} - ${error?.response.statusText}`,
+        status: "",
+      });
     }
   };
 
-  useEffect(() => {
-    getAllTableNames();
-  }, [getAllTableNames]);
-
   return (
-    <div className="p-3" style={{ border: "1px solid black" }}>
-      <h2 style={{ color: "red" }}>ADD TO TABLE</h2>
+    <div className="p-3" style={{ border: "1px solid black",minHeight:"95vh" }}>
+      <h2 style={{ color: "red" }}>ADD DATA</h2>
       <p>Table Name:</p>
       <select
-      className="w-100"
+        className="w-100"
         value={tableName}
         onChange={handleTableNameChange}
-        style={{height: "50px" }}
+        style={{ height: "50px" }}
       >
         <option value="">Select a table</option>
-        {tableNames.map((tableName) => (
+        {tableNames?.map((tableName) => (
           <option key={tableName} value={tableName}>
             {tableName}
           </option>
         ))}
       </select>
-      <p style={{ marginTop: "40px" }}>Parameters:</p>
+      <p className="mt-3 mb-1">Request:</p>
       <textarea
-      className="w-100"
-        value={jsonInput}
+        className="w-100"
+        value={JSON.stringify(jsonInput, null, 2)}
         onChange={handleJsonInputChange}
         style={{ minHeight: "50vh" }}
       />
       <button onClick={handleGenerateApi} style={{ marginTop: "20px" }}>
         Add
       </button>
-      {response && <p className="mt-4 mb-0">{response}</p>}
+      {response && (
+        <>
+          <p className="mt-4 mb-0" style={{ color: "red" }}>
+            {response?.url}
+          </p>
+          <p>{response?.status}</p>
+        </>
+      )}{" "}
     </div>
   );
 };
