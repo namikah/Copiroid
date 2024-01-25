@@ -35,36 +35,38 @@ const GenerateApi = () => {
       );
 
       const data = response.data;
-      setResponse(data);
+      setResponse(`${response.status} - ${response.statusText}`)
     } catch (error) {
-      console.error("Error:", error.message);
+      setResponse(`${error.response.status} - ${error.response.statusText}`)
     }
   };
 
   return (
-    <div>
+    <div className="p-3" style={{border:"1px solid black"}}>
+        <h2 style={{color:"red"}}>
+        GENERATE API
+        </h2>
       <p>
         Table Name:
       </p>
         <input
+        className="w-100"
           type="text"
           value={tableName}
           onChange={handleTableNameChange}
-          style={{ width: "300px", height: "50px"}}
+          style={{ height: "50px"}}
         />
-      <br />
       <p style={{marginTop:"40px"}}>
         Parameters:
       </p>
         <textarea
+        className="w-100"
           value={jsonInput}
           onChange={handleJsonInputChange}
-          style={{ width: "300px", height: "200px"}}
+          style={{minHeight: "50vh"}}
         />
-      <br />
-      <button onClick={handleGenerateApi} style={{marginTop:"20px"}}>Generate API</button>
-      <br />
-      {response && <p>Response: {response}</p>}
+      <button onClick={handleGenerateApi} style={{marginTop:"20px"}}>Create</button>
+      {response && <p className="mt-4 mb-0">{response}</p>}
     </div>
   );
 };
