@@ -1,14 +1,10 @@
 import axios from "axios";
 import React, { useCallback, useEffect, useState } from "react";
-import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
-import "react-tabs/style/react-tabs.css";
 
 const AddToTable = ({ tableNames }) => {
   const [tableName, setTableName] = useState("");
   const [jsonInput, setJsonInput] = useState({});
   const [response, setResponse] = useState("");
-  const [formFields, setFormFields] = useState([]);
-  const [selectedTab, setSelectedTab] = useState(0);
 
   const handleTableNameChange = useCallback((e) => {
     const tableName = e.target.value;
@@ -22,24 +18,22 @@ const AddToTable = ({ tableNames }) => {
       })
       .then((response) => {
         var object = {};
-        const fields = response?.data?.properties?.filter((item) => {
-          return item.name !== "Id" && item.type !== "INTEGER PRIMARY KEY";
-        });
+        response?.data?.properties?.map((item,index) => {
+          const { name, type } = item;
 
-        setFormFields(fields);
-        fields.forEach((item) => {
-          object[item.name] = "";
+          if (name !== "Id" && type !== "INTEGER PRIMARY KEY") {
+            object[name] = type;
+          }
+
         });
 
         setJsonInput(object);
+        console.log(object);
       });
-  }, []);
+  });
 
-  const handleInputChange = (fieldName, value) => {
-    setJsonInput((prevJsonInput) => ({
-      ...prevJsonInput,
-      [fieldName]: value,
-    }));
+  const handleJsonInputChange = (e) => {
+    setJsonInput(JSON.parse(e.target.value));
   };
 
   const handleGenerateApi = async () => {
@@ -70,21 +64,8 @@ const AddToTable = ({ tableNames }) => {
     }
   };
 
-  const handleTextAreaChange = (e) => {
-    const textAreaValue = e.target.value;
-    try {
-      const parsedJson = JSON.parse(textAreaValue);
-      setJsonInput(parsedJson);
-    } catch (error) {
-      console.error("Invalid JSON in textarea");
-    }
-  };
-
   return (
-    <div
-      className="p-3"
-      style={{ border: "1px solid black", minHeight: "95vh" }}
-    >
+    <div className="p-3" style={{ border: "1px solid black",minHeight:"95vh" }}>
       <h2 style={{ color: "red" }}>ADD DATA</h2>
       <p>Table Name:</p>
       <select
@@ -100,38 +81,13 @@ const AddToTable = ({ tableNames }) => {
           </option>
         ))}
       </select>
-      <Tabs
-      className="mt-3"
-        selectedIndex={selectedTab}
-        onSelect={(index) => setSelectedTab(index)}
-      >
-        <TabList>
-          <Tab>Input</Tab>
-          <Tab>Json</Tab>
-        </TabList>
-        <TabPanel>
-          {formFields.map((field) => (
-            <div key={field.name} className="mb-3 text-start mt-3">
-              <label className="d-block">{field.name}:</label>
-              <input
-              className="w-100"
-                type="text"
-                value={jsonInput[field.name]}
-                onChange={(e) => handleInputChange(field.name, e.target.value)}
-              />
-            </div>
-          ))}
-        </TabPanel>
-        <TabPanel>
-          <p className="mt-3 mb-1">Request:</p>
-          <textarea
-            className="w-100"
-            value={JSON.stringify(jsonInput, null, 2)}
-            onChange={handleTextAreaChange}
-            style={{ minHeight: "50vh" }}
-          />
-        </TabPanel>
-      </Tabs>
+      <p className="mt-3 mb-1">Request:</p>
+      <textarea
+        className="w-100"
+        value={JSON.stringify(jsonInput, null, 2)}
+        onChange={handleJsonInputChange}
+        style={{ minHeight: "50vh" }}
+      />
       <button onClick={handleGenerateApi} style={{ marginTop: "20px" }}>
         Add
       </button>
@@ -142,7 +98,7 @@ const AddToTable = ({ tableNames }) => {
           </p>
           <p>{response?.status}</p>
         </>
-      )}
+      )}{" "}
     </div>
   );
 };

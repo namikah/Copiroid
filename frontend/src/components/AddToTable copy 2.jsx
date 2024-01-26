@@ -1,14 +1,11 @@
 import axios from "axios";
 import React, { useCallback, useEffect, useState } from "react";
-import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
-import "react-tabs/style/react-tabs.css";
 
 const AddToTable = ({ tableNames }) => {
   const [tableName, setTableName] = useState("");
   const [jsonInput, setJsonInput] = useState({});
   const [response, setResponse] = useState("");
   const [formFields, setFormFields] = useState([]);
-  const [selectedTab, setSelectedTab] = useState(0);
 
   const handleTableNameChange = useCallback((e) => {
     const tableName = e.target.value;
@@ -70,21 +67,8 @@ const AddToTable = ({ tableNames }) => {
     }
   };
 
-  const handleTextAreaChange = (e) => {
-    const textAreaValue = e.target.value;
-    try {
-      const parsedJson = JSON.parse(textAreaValue);
-      setJsonInput(parsedJson);
-    } catch (error) {
-      console.error("Invalid JSON in textarea");
-    }
-  };
-
   return (
-    <div
-      className="p-3"
-      style={{ border: "1px solid black", minHeight: "95vh" }}
-    >
+    <div className="p-3" style={{ border: "1px solid black", minHeight: "95vh" }}>
       <h2 style={{ color: "red" }}>ADD DATA</h2>
       <p>Table Name:</p>
       <select
@@ -100,38 +84,17 @@ const AddToTable = ({ tableNames }) => {
           </option>
         ))}
       </select>
-      <Tabs
-      className="mt-3"
-        selectedIndex={selectedTab}
-        onSelect={(index) => setSelectedTab(index)}
-      >
-        <TabList>
-          <Tab>Input</Tab>
-          <Tab>Json</Tab>
-        </TabList>
-        <TabPanel>
-          {formFields.map((field) => (
-            <div key={field.name} className="mb-3 text-start mt-3">
-              <label className="d-block">{field.name}:</label>
-              <input
-              className="w-100"
-                type="text"
-                value={jsonInput[field.name]}
-                onChange={(e) => handleInputChange(field.name, e.target.value)}
-              />
-            </div>
-          ))}
-        </TabPanel>
-        <TabPanel>
-          <p className="mt-3 mb-1">Request:</p>
-          <textarea
-            className="w-100"
-            value={JSON.stringify(jsonInput, null, 2)}
-            onChange={handleTextAreaChange}
-            style={{ minHeight: "50vh" }}
+      <p className="mt-3 mb-1">Request:</p>
+      {formFields.map((field) => (
+        <div key={field.name} className="mb-3">
+          <label>{field.name}:</label>
+          <input
+            type="text"
+            value={jsonInput[field.name]}
+            onChange={(e) => handleInputChange(field.name, e.target.value)}
           />
-        </TabPanel>
-      </Tabs>
+        </div>
+      ))}
       <button onClick={handleGenerateApi} style={{ marginTop: "20px" }}>
         Add
       </button>

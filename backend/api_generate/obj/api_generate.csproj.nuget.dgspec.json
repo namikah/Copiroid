@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/namik/Projects/api_generate/api_generate/api_generate.csproj": {}
+    "/Users/namik/Desktop/repos/copiroid/backend/api_generate/api_generate.csproj": {}
   },
   "projects": {
-    "/Users/namik/Projects/api_generate/api_generate/api_generate.csproj": {
+    "/Users/namik/Desktop/repos/copiroid/backend/api_generate/api_generate.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/namik/Projects/api_generate/api_generate/api_generate.csproj",
+        "projectUniqueName": "/Users/namik/Desktop/repos/copiroid/backend/api_generate/api_generate.csproj",
         "projectName": "api_generate",
-        "projectPath": "/Users/namik/Projects/api_generate/api_generate/api_generate.csproj",
+        "projectPath": "/Users/namik/Desktop/repos/copiroid/backend/api_generate/api_generate.csproj",
         "packagesPath": "/Users/namik/.nuget/packages/",
-        "outputPath": "/Users/namik/Projects/api_generate/api_generate/obj/",
+        "outputPath": "/Users/namik/Desktop/repos/copiroid/backend/api_generate/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/namik/.nuget/NuGet/NuGet.Config"

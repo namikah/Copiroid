@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "iXY/04Dw9syLRTUCKY3Re5o+osKwjfEFwNV1t1EC/RxRvaNQd/GjVbvqdLpEV1qCAbiXwcPzSDZQJbgDCpEZuw==",
+  "dgSpecHash": "gQgf9LRMaWdf6t0QYNIJStNL4yhDckiLByF7aoneBP1DPL34UYjhB4TZnmmu4VVJrWSY+aZtylsB1NWV2KIYYg==",
   "success": true,
-  "projectFilePath": "/Users/namik/Projects/api_generate/api_generate/api_generate.csproj",
+  "projectFilePath": "/Users/namik/Desktop/repos/copiroid/backend/api_generate/api_generate.csproj",
   "expectedPackageFiles": [
     "/Users/namik/.nuget/packages/humanizer.core/2.14.1/humanizer.core.2.14.1.nupkg.sha512",
     "/Users/namik/.nuget/packages/microsoft.aspnetcore.antiforgery/2.2.0/microsoft.aspnetcore.antiforgery.2.2.0.nupkg.sha512",

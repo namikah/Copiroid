@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
-import "react-tabs/style/react-tabs.css";
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import 'react-tabs/style/react-tabs.css';
 
 const GenerateApi = () => {
   const [tableName, setTableName] = useState("");
@@ -31,7 +31,7 @@ const GenerateApi = () => {
   const handleAddProperty = () => {
     setNewProperties((prevProperties) => [
       ...prevProperties,
-      { name: "", type: "" },
+      { name: "", type: "" }
     ]);
   };
 
@@ -76,10 +76,7 @@ const GenerateApi = () => {
   }, [newProperties]);
 
   return (
-    <div
-      className="p-3"
-      style={{ border: "1px solid black", minHeight: "95vh" }}
-    >
+    <div className="p-3" style={{ border: "1px solid black", minHeight: "95vh" }}>
       <h2 style={{ color: "red" }}>GENERATE API</h2>
       <p>Table Name:</p>
       <input
@@ -89,46 +86,32 @@ const GenerateApi = () => {
         onChange={handleTableNameChange}
         style={{ height: "50px" }}
       />
-      <Tabs
-      className="mt-3"
-        selectedIndex={selectedTab}
-        onSelect={(index) => setSelectedTab(index)}
-      >
+      <Tabs selectedIndex={selectedTab} onSelect={index => setSelectedTab(index)}>
         <TabList>
           <Tab>Input Tab</Tab>
           <Tab>Textarea Tab</Tab>
         </TabList>
-        <TabPanel className="text-end">
+        <TabPanel>
+          <p>New Property:</p>
           {newProperties.map((property, index) => (
-            <div
-              className="mb-1 text-start row justify-content-around align-items-center mw-100"
-              style={{marginLeft:"1px"}}
-              key={index}
-            >
-              {/* <label className="col-12 d-block">Name:</label> */}
+            <div className="mb-3" key={index}>
+              <label>Name:</label>
               <input
-                className="col-9"
-                style={{height:"40px"}}
                 type="text"
                 value={property.name}
-                onChange={(e) =>
-                  handleInputChange(index, "name", e.target.value)
-                }
+                onChange={(e) => handleInputChange(index, "name", e.target.value)}
               />
-              {/* <label className="col-12 d-block">Type:</label> */}
-              <select
-                className="col-3 p-1"
-                style={{height:"40px"}}
+              <label>Type:</label>
+              <input
+                type="text"
                 value={property.type}
                 onChange={(e) => handleInputChange(index, "type", e.target.value)}
-              >
-                <option value="string">String</option>
-                <option value="int">Int</option>
-                <option value="object">Object</option>
-              </select>
+              />
             </div>
           ))}
-          <button onClick={handleAddProperty} style={{ marginBottom: "10px" }}>+</button>
+          <button onClick={handleAddProperty} style={{ marginBottom: "10px" }}>
+            Add Property
+          </button>
         </TabPanel>
         <TabPanel>
           <p className="mt-3 mb-1">Request:</p>
