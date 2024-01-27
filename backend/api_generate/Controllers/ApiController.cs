@@ -10,6 +10,7 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace api_generate.Controllers
 {
@@ -75,6 +76,61 @@ namespace api_generate.Controllers
             }
         }
 
+        [HttpPost("removeTable")]
+        public IActionResult RemoveTable([FromQuery] string tableName)
+        {
+            try
+            {
+                var tableNames = _context
+                     .Tables
+                     .FromSqlRaw("SELECT name FROM sqlite_master WHERE type='table'")
+                     .Select(table => table.Name)
+                     .ToList();
+
+                if (!tableNames.Contains(tableName))
+                {
+                    return NotFound("No tables found.");
+                }
+
+                string sql = $"DROP TABLE IF EXISTS {tableName};";
+                _context.Database.ExecuteSqlRaw(sql);
+
+                return Ok(new { message = $"Table removed: {tableName}" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
+
+        [HttpPost("updateTableName")]
+        public IActionResult UpdateTableName([FromQuery] string oldTableName, [FromQuery] string newTableName)
+        {
+            try
+            {
+                var tableNames = _context
+                    .Tables
+                    .FromSqlRaw("SELECT name FROM sqlite_master WHERE type='table'")
+                    .Select(table => table.Name)
+                    .ToList();
+
+                if (!tableNames.Contains(oldTableName))
+                {
+                    return NotFound($"Table not found: {oldTableName}");
+                }
+
+                string sql = $"ALTER TABLE {oldTableName} RENAME TO {newTableName};";
+                _context.Database.ExecuteSqlRaw(sql);
+
+                return Ok(new { message = $"Table name updated: {oldTableName} to {newTableName}" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
         [HttpPost("Add")]
         public IActionResult AddToTable([FromQuery] string tableName, Dictionary<string, string> keyValues)
         {
@@ -103,6 +159,41 @@ namespace api_generate.Controllers
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
+
+        [HttpPost("UpdateData")]
+        public IActionResult UpdateData([FromQuery] string tableName, [FromQuery] string dataId, Dictionary<string, string> keyValues)
+        {
+
+            try
+            {
+                var setClause = "";
+
+                foreach (var item in keyValues)
+                {
+                    setClause += $"{item.Key} = '{item.Value}',";
+                }
+
+                setClause = setClause.TrimEnd(',');
+
+                var updateQuery = $"UPDATE {tableName} SET {setClause} WHERE Id = {dataId};";
+                var recordsUpdated = _context.Database.ExecuteSqlRaw(updateQuery);
+
+                if (recordsUpdated == 0)
+                {
+                    return NotFound($"Record with ID {dataId} in table {tableName} not found.");
+                }
+
+                var endpointUrl = $"/api/get/{tableName}";
+
+                return Ok($"Data updated");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
+
+
 
         [HttpGet("Get/{tableName}")]
         public IActionResult GetApi(string tableName)

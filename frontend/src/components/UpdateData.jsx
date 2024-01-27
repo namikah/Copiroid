@@ -4,9 +4,10 @@ import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
 import { useConstantContext } from "../Context/Constant/Index";
 
-const AddToTable = () => {
+const UpdateData = () => {
   const [tableName, setTableName] = useState("");
   const [jsonInput, setJsonInput] = useState({});
+  const [updateId, setUpdateId] = useState(""); // New state for update ID
   const [response, setResponse] = useState("");
   const [formFields, setFormFields] = useState([]);
   const [selectedTab, setSelectedTab] = useState(0);
@@ -44,11 +45,14 @@ const AddToTable = () => {
     }));
   };
 
-  const handleGenerateApi = async () => {
-    try {
+  const handleUpdateIdChange = (e) => {
+    setUpdateId(e.target.value);
+  };
 
+  const handleUpdateData = async () => {
+    try {
       const response = await axios.post(
-        `https://localhost:4567/Api/Add?tableName=${tableName}`,
+        `https://localhost:4567/Api/UpdateData?tableName=${tableName}&dataId=${updateId}`,
         jsonInput,
         {
           headers: {
@@ -58,25 +62,10 @@ const AddToTable = () => {
       );
 
       const data = response.data;
-      setResponse({
-        url: `${response.status} - ${response.statusText}`,
-        status: data,
-      });
+      setResponse(data);
     } catch (error) {
-      setResponse({
-        url: `${error?.response.status} - ${error?.response.statusText}`,
-        status: "",
-      });
-    }
-  };
-
-  const handleTextAreaChange = (e) => {
-    const textAreaValue = e.target.value;
-    try {
-      const parsedJson = JSON.parse(textAreaValue);
-      setJsonInput(parsedJson);
-    } catch (error) {
-      console.error("Invalid JSON in textarea");
+      console.log(error);
+      setResponse(`${error?.response.status}-${error?.response.statusText}`);
     }
   };
 
@@ -85,8 +74,8 @@ const AddToTable = () => {
       className="p-3"
       style={{ border: "1px solid black", minHeight: "95vh" }}
     >
-      <h2 style={{ color: "red" }}>ADD DATA</h2>
-      <p>Table Name:</p>
+      <h2 style={{ color: "red" }}>UPDATE DATA</h2>
+      <p>Select Table for Update:</p>
       <select
         className="w-100"
         value={tableName}
@@ -100,51 +89,36 @@ const AddToTable = () => {
           </option>
         ))}
       </select>
-      <Tabs
-      className="mt-3"
-        selectedIndex={selectedTab}
-        onSelect={(index) => setSelectedTab(index)}
-      >
-        <TabList>
-          <Tab>Input</Tab>
-          <Tab>Json</Tab>
-        </TabList>
-        <TabPanel>
-          {formFields.map((field) => (
-            <div key={field.name} className="mb-3 text-start mt-3">
-              <label className="d-block">{field.name}:</label>
-              <input
-              className="w-100"
-                type="text"
-                value={jsonInput[field.name]}
-                onChange={(e) => handleInputChange(field.name, e.target.value)}
-              />
-            </div>
-          ))}
-        </TabPanel>
-        <TabPanel>
-          <p className="mt-3 mb-1">Request:</p>
-          <textarea
+      <div className="mb-3 text-start mt-3">
+        <label className="d-block">ID for Update:</label>
+        <input
+          className="w-100"
+          type="text"
+          value={updateId}
+          onChange={handleUpdateIdChange}
+        />
+      </div>
+      {formFields.map((field) => (
+        <div key={field.name} className="mb-3 text-start mt-3">
+          <label className="d-block">{field.name}:</label>
+          <input
             className="w-100"
-            value={JSON.stringify(jsonInput, null, 2)}
-            onChange={handleTextAreaChange}
-            style={{ minHeight: "50vh" }}
+            type="text"
+            value={jsonInput[field.name]}
+            onChange={(e) => handleInputChange(field.name, e.target.value)}
           />
-        </TabPanel>
-      </Tabs>
-      <button onClick={handleGenerateApi} style={{ marginTop: "20px" }}>
-        Add
+        </div>
+      ))}
+      <button onClick={handleUpdateData} style={{ marginTop: "20px" }}>
+        Update
       </button>
       {response && (
-        <>
-          <p className="mt-4 mb-0" style={{ color: "red" }}>
-            {response?.url}
-          </p>
-          <p>{response?.status}</p>
-        </>
+        <p className="mt-4 mb-0" style={{ color: "red" }}>
+          {response}
+        </p>
       )}
     </div>
   );
 };
 
-export default AddToTable;
+export default UpdateData;

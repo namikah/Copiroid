@@ -2,37 +2,40 @@ import axios from "axios";
 import React, { useState } from "react";
 import { useConstantContext } from "../Context/Constant/Index";
 
-const GetTable = () => {
+const RemoveData = () => {
   const [tableName, setTableName] = useState("");
-  const [jsonInput, setJsonInput] = useState([]);
   const [response, setResponse] = useState("");
-  const [{ tableNames }] = useConstantContext([]);
+  const [{ tableNames,setTableNames }] = useConstantContext([]);
 
   const handleTableNameChange = (e) => {
     setTableName(e.target.value);
   };
 
-  const handleJsonInputChange = (e) => {
-    setJsonInput(e.target.value);
-  };
-
-  const getData = async () => {
+  const removeData = async () => {
     try {
-      const response = await axios.get(
-        `https://localhost:4567/api/Get/${tableName}`
+      const response = await axios.post(
+        `https://localhost:4567/api/RemoveTable?tableName=${tableName}`
       );
-      setJsonInput(response.data);
       setResponse(`${response.status} - ${response.statusText}`);
+       //start refreshTableNames
+       try {
+        const response = await axios.get(
+          "https://localhost:4567/api/GetAllTableNames"
+        );
+        setTableNames(response.data);
+      } catch (error) {
+        console.error("Error fetching table names:", error);
+      }
+      //end refreshTableNames
     } catch (error) {
       setResponse(`${error.response.status} - ${error.response.statusText}`);
-      setJsonInput(error);
     }
   };
 
   return (
-    <div className="p-3" style={{ border: "1px solid black",minHeight:"95vh" }}>
-      <h2 style={{ color: "red" }}>SELECT DATA</h2>
-      <p>Table Name:</p>
+    <div className="p-3" style={{ border: "1px solid black", minHeight: "95vh" }}>
+      <h2 style={{ color: "red" }}>REMOVE TABLE</h2>
+      <p className="m-0">Table Name:</p>
       <select
         className="w-100"
         value={tableName}
@@ -46,16 +49,8 @@ const GetTable = () => {
           </option>
         ))}
       </select>
-      <p className="mt-3 mb-1">Response:</p>
-      <pre
-      className="text-start"
-        onChange={handleJsonInputChange}
-        style={{ width: "100%", height: "50vh", overflow:"auto", background:"#3B3B3B",color:"white"}}
-      >
-        {JSON.stringify(jsonInput, null, 2)}
-      </pre>
-      <button onClick={getData} style={{ marginTop: "20px" }}>
-        Get
+      <button onClick={removeData} style={{ marginTop: "20px" }}>
+        Remove Data
       </button>
       {response && (
         <p className="mt-4 mb-0" style={{ color: "red" }}>
@@ -66,4 +61,4 @@ const GetTable = () => {
   );
 };
 
-export default GetTable;
+export default RemoveData;

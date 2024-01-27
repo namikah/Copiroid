@@ -34,7 +34,7 @@ namespace api_generate.Context
         public void Configure(EntityTypeBuilder<DynamicTable> builder)
         {
             builder.ToTable("DynamicTable");
-            builder.HasNoKey();
+            builder.HasKey(e => e.Id);
         }
     }
 }

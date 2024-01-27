@@ -4,8 +4,10 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
+import { useConstantContext } from "../Context/Constant/Index";
 
 const GenerateApi = () => {
+  const [{ tableNames, setTableNames }] = useConstantContext();
   const [tableName, setTableName] = useState("");
   const [jsonInput, setJsonInput] = useState(`[
     {
@@ -74,6 +76,18 @@ const GenerateApi = () => {
         url: `${response.status} - ${response.statusText}`,
         status: data,
       });
+
+      //start refreshTableNames
+      try {
+        const response = await axios.get(
+          "https://localhost:4567/api/GetAllTableNames"
+        );
+        setTableNames(response.data);
+      } catch (error) {
+        console.error("Error fetching table names:", error);
+      }
+      //end refreshTableNames
+
     } catch (error) {
       setResponse({
         url: `${error?.response.status} - ${error?.response.statusText}`,
