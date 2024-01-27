@@ -31,8 +31,17 @@ const GenerateApi = () => {
   const handleAddProperty = () => {
     setNewProperties((prevProperties) => [
       ...prevProperties,
-      { name: "", type: "" },
+      { name: "", type: "string" },
     ]);
+  };
+
+  const handleRemoveProperty = (index) => {
+    setNewProperties((prevProperties) => {
+      const updatedProperties = [...prevProperties];
+      updatedProperties.splice(index, 1);
+      return updatedProperties;
+    });
+    handleJsonInputChange();
   };
 
   const handleInputChange = (index, key, value) => {
@@ -90,25 +99,25 @@ const GenerateApi = () => {
         style={{ height: "50px" }}
       />
       <Tabs
-      className="mt-3"
+        className="mt-3"
         selectedIndex={selectedTab}
         onSelect={(index) => setSelectedTab(index)}
       >
         <TabList>
-          <Tab>Input Tab</Tab>
-          <Tab>Textarea Tab</Tab>
+          <Tab>Input</Tab>
+          <Tab>Json</Tab>
         </TabList>
         <TabPanel className="text-end">
           {newProperties.map((property, index) => (
             <div
               className="mb-1 text-start row justify-content-around align-items-center mw-100"
-              style={{marginLeft:"1px"}}
+              style={{ marginLeft: "1px" }}
               key={index}
             >
               {/* <label className="col-12 d-block">Name:</label> */}
               <input
-                className="col-9"
-                style={{height:"40px"}}
+                className="col-8"
+                style={{ height: "40px" }}
                 type="text"
                 value={property.name}
                 onChange={(e) =>
@@ -118,17 +127,32 @@ const GenerateApi = () => {
               {/* <label className="col-12 d-block">Type:</label> */}
               <select
                 className="col-3 p-1"
-                style={{height:"40px"}}
+                style={{ height: "40px" }}
                 value={property.type}
-                onChange={(e) => handleInputChange(index, "type", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange(index, "type", e.target.value)
+                }
               >
                 <option value="string">String</option>
                 <option value="int">Int</option>
                 <option value="object">Object</option>
               </select>
+              <button
+                className="col-1 m-0"
+                onClick={handleRemoveProperty}
+                style={{ height: "40px", marginBottom: "10px" }}
+              >
+                x
+              </button>
             </div>
           ))}
-          <button onClick={handleAddProperty} style={{ marginBottom: "10px" }}>+</button>
+          <button
+            className="w-100"
+            onClick={handleAddProperty}
+            style={{ marginBottom: "10px" }}
+          >
+            +
+          </button>
         </TabPanel>
         <TabPanel>
           <p className="mt-3 mb-1">Request:</p>
