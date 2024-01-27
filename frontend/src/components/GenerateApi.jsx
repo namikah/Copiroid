@@ -1,3 +1,5 @@
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
@@ -81,7 +83,7 @@ const GenerateApi = () => {
   };
 
   useEffect(() => {
-    handleJsonInputChange(); // Update the textarea whenever newProperties changes
+    handleJsonInputChange();
   }, [newProperties]);
 
   return (
@@ -114,7 +116,6 @@ const GenerateApi = () => {
               style={{ marginLeft: "1px" }}
               key={index}
             >
-              {/* <label className="col-12 d-block">Name:</label> */}
               <input
                 className="col-8"
                 style={{ height: "40px" }}
@@ -124,7 +125,6 @@ const GenerateApi = () => {
                   handleInputChange(index, "name", e.target.value)
                 }
               />
-              {/* <label className="col-12 d-block">Type:</label> */}
               <select
                 className="col-3 p-1"
                 style={{ height: "40px" }}
@@ -138,13 +138,12 @@ const GenerateApi = () => {
                 <option value="bool">Bool</option>
                 <option value="object">Object</option>
               </select>
-              <button
-                className="col-1 m-0"
+              <FontAwesomeIcon
                 onClick={() => handleRemoveProperty(index)}
-                style={{ height: "40px", marginBottom: "10px" }}
-              >
-                x
-              </button>
+                icon={faXmark}
+                className="col-1 d-block p-0"
+                style={{ cursor: "pointer" }}
+              />
             </div>
           ))}
           <button
