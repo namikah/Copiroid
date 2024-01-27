@@ -10,6 +10,8 @@
                 "int" => "INTEGER",
                 "String" => "TEXT",
                 "string" => "TEXT",
+                "bool" => "BOOLEAN",
+                "Boolean" => "BOOLEAN",
                 _ => "TEXT",
             };
         }

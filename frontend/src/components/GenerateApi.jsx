@@ -135,11 +135,12 @@ const GenerateApi = () => {
               >
                 <option value="string">String</option>
                 <option value="int">Int</option>
+                <option value="bool">Bool</option>
                 <option value="object">Object</option>
               </select>
               <button
                 className="col-1 m-0"
-                onClick={handleRemoveProperty}
+                onClick={() => handleRemoveProperty(index)}
                 style={{ height: "40px", marginBottom: "10px" }}
               >
                 x
